@@ -24,10 +24,7 @@ module.exports = {
             'error',
             4
         ],
-        'linebreak-style': [
-            'error',
-            'windows'
-        ],
+        '@typescript-eslint/no-var-requires': 0,
         'quotes': [
             'error',
             'single'
