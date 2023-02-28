@@ -8,12 +8,15 @@ import {Link, useNavigate} from 'react-router-dom';
 import {TimedOffModal} from './components/TimedOffModal/TimedOffModal';
 
 function App() {
-    const [isPhoneModalActive, setIsPhoneModalActive] = useState(false);
+    const [isPhoneModalActive, setIsPhoneModalActive] = useState(true);
     const [isTimedOff, setIsTimedOff] = useState(false);
     const [questionNumber, setQuestionNumber] = useState(1);
     const [isStarted, setIsStarted] = useState(false);
     const [enteredAnswers, setEnteredAnswers] = useState<any>([]);
     const [seconds, setSeconds] = useState(+window.localStorage.timeLeft || 1800);
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [result, setResult] = useState(75);
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -21,9 +24,16 @@ function App() {
         if (cookies === 'true') {
             setIsTimedOff(true);
         }
-        setSeconds(+window.localStorage.time || 1800);
         navigate('/0');
     }, []);
+
+    useEffect(() => {
+        if (isPhoneModalActive || isTimedOff) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'visible';
+        }
+    }, [isPhoneModalActive, isTimedOff]);
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
         e.preventDefault();
@@ -53,7 +63,7 @@ function App() {
                         <p className="timer">Залишилось часу: {
                             isStarted
                                 ? <Countdown setIsTimedOff={setIsTimedOff} seconds={seconds} />
-                                : '30.00'}
+                                : '30:00'}
                         </p>
                     </div>
 
@@ -63,6 +73,9 @@ function App() {
                             setQuestionNumber={setQuestionNumber}
                             setEnteredAnswers={setEnteredAnswers}
                             enteredAnswers={enteredAnswers}
+                            phoneNumber={phoneNumber}
+                            result={result}
+                            setResult={setResult}
                         />
                     </div>
 
@@ -72,8 +85,16 @@ function App() {
                         </div>
                     }
 
-                    {isPhoneModalActive && <Modal setActive={setIsPhoneModalActive}/>}
-                    {isTimedOff && <TimedOffModal />}
+                    {isPhoneModalActive && <Modal setActive={setIsPhoneModalActive} setPhoneNumber={setPhoneNumber}/>}
+                    {
+                        isTimedOff &&
+                        <TimedOffModal
+                            result={result}
+                            enteredAnswers={enteredAnswers}
+                            phoneNumber={phoneNumber}
+                            setResult={setResult}
+                        />
+                    }
                 </div>
 
                 <div className="footer"></div>
